@@ -1,3 +1,6 @@
+#desenvolvido por Gabriel Lavareda, LikedIn: https://www.linkedin.com/in/gabriellavareda/
+
+#Importando Bibliotecas Necessárias, verifique o PIP FREEZE em READ-ME
 import pyautogui as auto
 import keyboard as keyb
 import pyperclip
@@ -9,29 +12,31 @@ import os
 import subprocess
 import re
 
-
+# Essa parte serve para obter o caminho do arquivo "caminho.txt", este arquivo 
+# conterá o endereço da pasta "padrão" de "salvamento" quando utilizado o ALT + S
 script_dir = os.path.dirname(os.path.abspath(__file__))
 caminho_arquivo = os.path.join(script_dir, 'caminho.txt')
 
+#função para a leitura do caminho padrão
 def read_path():
     with open(caminho_arquivo, 'r') as arquivo:
         caminho_padrao = arquivo.read()
         return caminho_padrao
 
+#Função Tkinter, serve para obter o caminho desejado quando utilizado o comando ALT + A
 def selecionar_diretorio():
     root = tk.Tk()
     root.withdraw()  
     caminho = filedialog.askdirectory() 
     return caminho
 
+#Alertas de Retorno para o Usuário (Tkiter)
 def show_alert_padrao(caminho):
     messagebox.showinfo("HotkeyVideoDownloader", f"Baixado com Sucesso\n Local:\n {caminho}")
-
 
 def show_alert_proibido():
     messagebox.showwarning(f"HotkeyVideoDownloader", "Esse vídeo NÃO pode ser baixado!"
                            f"\nPossível motivo: Vídeo somente para membros!")
-
 def show_alert_error():
     messagebox.showwarning("HotkeyVideoDownloader", "Ocorreu um Erro")
 
@@ -41,6 +46,7 @@ def url_invalida():
 def url_exit():
     messagebox.showwarning("HotkeyVideoDownloader", "Finalizando Tarefa...")
 
+#Função para baixar vídeos das redes sociais (facebook e twitter), utilizando a fork yt-dlp
 def download_video(url, output_path):
     try:
         result = subprocess.run(
@@ -54,11 +60,17 @@ def download_video(url, output_path):
     except subprocess.CalledProcessError as e:
         show_alert_error()
 
+# Para que o código funcione de acordo devemos padronizar o url do twitter para que a tentative do download seja feito apenas
+# quando um vídeo ou alguma publicação estiver aberta.
 def padronizar_url(url):
     # Removendo a parte entre 'https://x.com/' e '/status/' e qualquer texto após '/status/'
     url_normalizada = re.sub(r'https://x.com/[^/]+/status/\d+', 'https://x.com//status/', url)
     return url_normalizada
 
+# Essa parte do código é semelhante com a de cima, a diferença é que os URLS do Facebook e Youtube são semelhantes onde
+# o código do vídeo ficam ao final, já no twitter, fica no meio.
+
+# o Código abaixo seleciona apenas os primeiros 30 caracteres do link para verificar se são validos ou não.
 def get_url():
     auto.hotkey("altleft", "d")
     auto.hotkey("ctrlleft", "c")
@@ -137,7 +149,8 @@ while True:
 
         else:
             url_invalida()
-        
+            
+#encerrar programa
     elif keyb.is_pressed("alt") and keyb.is_pressed("c"):
         url_exit()
         quit()
